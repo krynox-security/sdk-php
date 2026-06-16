@@ -1,0 +1,20 @@
+{
+  "name": "krynox/captcha",
+  "description": "Official PHP server-side verification SDK for Krynox Captcha.",
+  "type": "library",
+  "license": "MIT",
+  "homepage": "https://krynox.id",
+  "keywords": ["krynox", "captcha", "bot", "verification", "proof-of-work"],
+  "support": {
+    "issues": "https://gitlab.com/krynox/captcha/sdk-php/-/issues",
+    "source": "https://gitlab.com/krynox/captcha/sdk-php"
+  },
+  "require": {
+    "php": ">=8.1",
+    "ext-curl": "*",
+    "ext-json": "*"
+  },
+  "autoload": {
+    "psr-4": { "Krynox\\Captcha\\": "src/" }
+  }
+}
