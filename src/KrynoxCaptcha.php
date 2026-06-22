@@ -14,7 +14,7 @@ namespace Krynox\Captcha;
  */
 final class KrynoxCaptcha
 {
-    private const DEFAULT_ENDPOINT = 'https://captcha.krynox.id/siteverify';
+    private const DEFAULT_ENDPOINT = 'https://api.krynox.id/siteverify';
 
     private string $secret;
     private string $endpoint;
