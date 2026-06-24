@@ -10,7 +10,9 @@ namespace Krynox\Captcha;
  *   $krynox = new \Krynox\Captcha\KrynoxCaptcha(getenv('KRYNOX_SECRET'));
  *   $result = $krynox->verify($_POST['krynox-captcha'] ?? '', $_SERVER['REMOTE_ADDR'] ?? null);
  *   if (!$result->success) { http_response_code(400); exit('captcha failed'); }
- *   if ($result->risk === 'high') { /* extra friction */ }
+ *   if ($result->risk === 'high') {
+ *       // add friction (email verification, manual review, ...)
+ *   }
  */
 final class KrynoxCaptcha
 {
