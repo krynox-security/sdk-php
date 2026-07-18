@@ -1,0 +1,21 @@
+name: Release
+
+# Composer packages are versioned by git tags; Packagist auto-syncs from GitHub via a webhook once
+# the repo is submitted on packagist.org (one-time). This force-pings Packagist on a tag so the new
+# version appears immediately. Requires PACKAGIST_USERNAME + PACKAGIST_API_TOKEN secrets.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  notify-packagist:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Packagist to sync the new tag
+        run: |
+          curl -sf -XPOST -H "content-type:application/json" \
+            "https://packagist.org/api/update-package?username=${{ secrets.PACKAGIST_USERNAME }}&apiToken=${{ secrets.PACKAGIST_API_TOKEN }}" \
+            -d "{\"repository\":{\"url\":\"https://github.com/${{ github.repository }}\"}}"
