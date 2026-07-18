@@ -3,7 +3,7 @@
   "description": "Official PHP server-side verification SDK for Krynox Captcha.",
   "type": "library",
   "license": "MIT",
-  "homepage": "https://krynox.id",
+  "homepage": "https://krynox.net",
   "keywords": ["krynox", "captcha", "bot", "verification", "proof-of-work"],
   "support": {
     "issues": "https://github.com/krynox-security/sdk-php/issues",
