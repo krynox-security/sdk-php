@@ -78,7 +78,9 @@ final class KrynoxCaptcha
                 ($human['attested'] ?? false) === true,
                 $human['method'] ?? null,
                 $human['issuer'] ?? null
-            ) : null
+            ) : null,
+            $data['action'] ?? null,
+            $data['cdata'] ?? null
         );
     }
 
@@ -222,7 +224,9 @@ final class KrynoxResult
         public readonly array $errorCodes = [],
         public readonly array $reasons = [],
         public readonly ?KrynoxAgent $agent = null,
-        public readonly ?KrynoxHuman $human = null
+        public readonly ?KrynoxHuman $human = null,
+        public readonly ?string $action = null,
+        public readonly ?string $cdata = null
     ) {
     }
 }

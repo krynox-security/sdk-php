@@ -67,7 +67,7 @@ $krynox->feedback('bot', $suspiciousIp);
 - `->classify(?string $text = null, ?array $fields = null, ?string $ip = null): KrynoxClassification`
 - `->feedback(string $label, ?string $ip = null, ?string $note = null): KrynoxFeedback` — `$label` is `'human'` or `'bot'`
 
-`KrynoxResult`: `success, score, risk, hostname, challengeTs, errorCodes, reasons, agent, human`.
+`KrynoxResult`: `success, score, risk, hostname, challengeTs, action, cdata, errorCodes, reasons, agent, human`.
 `KrynoxClassification`: `ok, score, classification, reasons, blocked, errorCodes`.
 Error codes: `KrynoxErrorCode::RATE_LIMITED`, etc.
 
