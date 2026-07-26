@@ -18,6 +18,16 @@ final class KrynoxCaptcha
 {
     private const DEFAULT_ENDPOINT = 'https://api.krynox.net/siteverify';
 
+    /**
+     * Package version. Composer packages are versioned by the release tag rather than by
+     * composer.json, so this constant is the single source of truth for the wire version —
+     * bump it in the same commit as the `v…` tag.
+     */
+    public const VERSION = '0.1.0';
+
+    /** Sent as `User-Agent` on every request, so the API can attribute traffic to SDK + version. */
+    public const USER_AGENT = 'krynox-captcha-php/' . self::VERSION;
+
     private string $secret;
     private string $endpoint;
     private int $timeout;
@@ -130,9 +140,19 @@ final class KrynoxCaptcha
         );
     }
 
+    /**
+     * Derive a sibling endpoint ('/classify', '/feedback') from the configured verify endpoint.
+     * An endpoint ending in `/siteverify` (a trailing slash is ignored) has that suffix replaced;
+     * anything else is treated as a base URL and the path is appended.
+     */
     private function derive(string $path): string
     {
-        return preg_replace('#/siteverify$#', $path, $this->endpoint) ?? $this->endpoint;
+        $base = rtrim($this->endpoint, '/');
+        if (str_ends_with($base, '/siteverify')) {
+            $base = substr($base, 0, -strlen('/siteverify'));
+        }
+
+        return $base . $path;
     }
 
     /**
@@ -150,7 +170,7 @@ final class KrynoxCaptcha
             curl_setopt_array($ch, [
                 CURLOPT_POST => true,
                 CURLOPT_POSTFIELDS => $payload,
-                CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
+                CURLOPT_HTTPHEADER => ['Content-Type: application/json', 'User-Agent: ' . self::USER_AGENT],
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_TIMEOUT => $this->timeout,
             ]);

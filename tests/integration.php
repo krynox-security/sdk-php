@@ -11,7 +11,8 @@ declare(strict_types=1);
  *
  * Scenarios: happy path (exact body keys incl. explicit null remoteip),
  * 500→200 retry, 429→200 retry, exhausted retries, timeout, API failure
- * parsing, classify()/feedback(), and "honeypot"/"sitekey" never sent.
+ * parsing, classify()/feedback(), the User-Agent header, both derived-URL
+ * shapes, and "honeypot"/"sitekey" never sent.
  */
 
 require __DIR__ . '/../src/KrynoxCaptcha.php';
@@ -74,7 +75,7 @@ assert($ready === true, 'mock server became ready');
 /**
  * Requests recorded by the mock server, optionally filtered by path.
  *
- * @return array<int,array{path:string,body:string}>
+ * @return array<int,array{path:string,body:string,ua:?string}>
  */
 function recorded(string $stateDir, ?string $path = null): array
 {
@@ -193,6 +194,32 @@ $body = json_decode($reqs[0]['body'], true);
 assert(array_keys($body) === ['secret', 'label', 'ip', 'note'], 'feedback: exact body keys');
 assert($body['label'] === 'human' && $body['ip'] === '203.0.113.9' && $body['note'] === null, 'feedback: values');
 
+// --- 9. derived URLs: both endpoint shapes ------------------------------------
+
+// (a) endpoint ending in /siteverify with a trailing slash → suffix still replaced.
+$slash = new KrynoxCaptcha($secret, "http://$host:$port/siteverify/", 2, 0);
+assert($slash->classify('spam')->ok === true, 'derive: trailing-slash /siteverify → /classify');
+assert(count(recorded($stateDir, '/classify')) === 2, 'derive: trailing slash collapsed to /classify');
+assert($slash->feedback('bot')->ok === true, 'derive: trailing-slash /siteverify → /feedback');
+assert(count(recorded($stateDir, '/feedback')) === 2, 'derive: trailing slash collapsed to /feedback');
+
+// (b) endpoint that is a plain base URL → the path is appended, NOT left at the verify URL.
+foreach (["http://$host:$port/base", "http://$host:$port/base/"] as $i => $baseEndpoint) {
+    $baseSdk = new KrynoxCaptcha($secret, $baseEndpoint, 2, 0);
+    assert($baseSdk->classify('spam')->ok === true, "derive: base URL → /base/classify ($baseEndpoint)");
+    assert($baseSdk->feedback('bot')->ok === true, "derive: base URL → /base/feedback ($baseEndpoint)");
+    assert(count(recorded($stateDir, '/base/classify')) === $i + 1, 'derive: /base/classify hit');
+    assert(count(recorded($stateDir, '/base/feedback')) === $i + 1, 'derive: /base/feedback hit');
+}
+assert(count(recorded($stateDir, '/base')) === 0, 'derive: a base endpoint is never POSTed a classify payload');
+
+// --- 10. User-Agent on every outbound request ----------------------------------
+
+assert(KrynoxCaptcha::USER_AGENT === 'krynox-captcha-php/0.1.0', 'ua: exact constant');
+foreach (recorded($stateDir) as $req) {
+    assert($req['ua'] === 'krynox-captcha-php/0.1.0', "ua: sent on {$req['path']} (got " . var_export($req['ua'], true) . ')');
+}
+
 // --- 5. timeout (1 s is the smallest configurable CURLOPT_TIMEOUT); kept last --
 
 $slow = new KrynoxCaptcha($secret, "http://$host:$port/slow", 1, 0);
@@ -205,13 +232,14 @@ assert($elapsed < 1.8, 'timeout: cut off by CURLOPT_TIMEOUT, not the 2 s slow ha
 // --- 8. "honeypot" (and "sitekey") never sent ----------------------------------
 
 $all = recorded($stateDir);
-assert(count($all) >= 10, 'sanity: requests were recorded');
+assert(count($all) >= 18, 'sanity: requests were recorded');
 foreach ($all as $req) {
     assert(strpos($req['body'], 'honeypot') === false, 'no honeypot field ever sent');
     assert(strpos($req['body'], 'sitekey') === false, 'no sitekey field ever sent');
+    assert($req['ua'] === 'krynox-captcha-php/0.1.0', 'User-Agent sent on every request');
 }
 
 proc_terminate($proc);
 proc_close($proc);
 $proc = null;
-echo "integration: ok (8 scenarios)\n";
+echo "integration: ok (10 scenarios)\n";

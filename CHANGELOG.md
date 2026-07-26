@@ -25,12 +25,20 @@ First release.
 - Automatic retries on transient failures (network, `429`, `5xx`), each carrying
   a per-verify idempotency key so a retried single-use token replays the first
   outcome instead of failing.
-- Configurable API host for self-hosted deployments.
+- Configurable API host for self-hosted deployments — either a full verify URL
+  ending in `/siteverify` or a plain base URL. `classify()` and `feedback()`
+  derive their URLs from it: a `/siteverify` suffix (a trailing slash is
+  ignored) is replaced, otherwise the path is appended to the base.
+- `User-Agent: krynox-captcha-php/<version>` on every request (verify, classify,
+  feedback), so API traffic is attributable to SDK and version.
 - PSR-4 autoloading.
 
 ### Notes
 
 - The seven SDKs are held to one shared response contract, enforced by a
   byte-identical golden fixture and a contract test in every language.
+- Composer packages take their version from the release tag, so
+  `KrynoxCaptcha::VERSION` (the source of the `User-Agent`) is a hardcoded
+  constant — bump it in the same commit as the `v…` tag.
 
 [0.1.0]: https://github.com/krynox-security/sdk-php/releases/tag/v0.1.0

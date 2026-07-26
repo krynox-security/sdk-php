@@ -71,4 +71,10 @@ $krynox->feedback('bot', $suspiciousIp);
 `KrynoxClassification`: `ok, score, classification, reasons, blocked, errorCodes`.
 Error codes: `KrynoxErrorCode::RATE_LIMITED`, etc.
 
-Self-hosting? Pass the endpoint as the 2nd constructor arg.
+Self-hosting? Pass the endpoint as the 2nd constructor arg — either the full verify URL
+(`https://captcha.your-domain/siteverify`) or a base URL (`https://captcha.your-domain`).
+`classify()` and `feedback()` derive their URLs from it: a `/siteverify` suffix is replaced,
+otherwise the path is appended.
+
+Every request carries `User-Agent: krynox-captcha-php/0.1.0`
+(`KrynoxCaptcha::USER_AGENT`), so API traffic is attributable to SDK and version.

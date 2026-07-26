@@ -9,9 +9,9 @@ declare(strict_types=1);
  *   KRYNOX_TEST_STATE=<dir> php -S 127.0.0.1:<port> tests/mock-server.php
  *
  * Every request is appended to <state>/requests.log as a JSON line
- * {"path": ..., "body": ...} so the test can assert exact request bodies and
- * hit counts. Stateful scenarios (retry endpoints) count hits in files under
- * the state dir.
+ * {"path": ..., "body": ..., "ua": ...} so the test can assert exact request
+ * bodies, headers and hit counts. Stateful scenarios (retry endpoints) count
+ * hits in files under the state dir.
  */
 
 $stateDir = getenv('KRYNOX_TEST_STATE') ?: sys_get_temp_dir();
@@ -20,7 +20,7 @@ $body = (string) file_get_contents('php://input');
 
 file_put_contents(
     $stateDir . '/requests.log',
-    json_encode(['path' => $path, 'body' => $body]) . "\n",
+    json_encode(['path' => $path, 'body' => $body, 'ua' => $_SERVER['HTTP_USER_AGENT'] ?? null]) . "\n",
     FILE_APPEND | LOCK_EX
 );
 
@@ -81,11 +81,15 @@ switch ($path) {
         echo json_encode(golden('verify'));
         break;
 
+    // Both derived-URL shapes: `<base>/siteverify` collapses to `<base>/classify`, while a plain
+    // base endpoint (`/base`, with or without a trailing slash) appends to give `/base/classify`.
     case '/classify':
+    case '/base/classify':
         echo json_encode(golden('classify'));
         break;
 
     case '/feedback':
+    case '/base/feedback':
         echo json_encode(['ok' => true, 'corrected' => true]);
         break;
 
