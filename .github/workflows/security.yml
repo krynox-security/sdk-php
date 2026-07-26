@@ -21,6 +21,46 @@ permissions:
   contents: read
 
 jobs:
+  dependency-audit:
+    name: Dependency Audit (Composer)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          persist-credentials: false
+      - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        with:
+          php-version: '8.3'
+          tools: composer:v2
+      - name: Resolve dependency graph without executing package code
+        run: composer update --no-install --no-interaction --no-progress --no-scripts --no-plugins --no-audit
+      - name: Audit locked dependency graph
+        run: |
+          set -euo pipefail
+          # The SDK currently has only PHP-extension requirements. Keep the job
+          # green for an empty package graph, but audit automatically as soon as
+          # a package dependency is added.
+          if [ "$(composer show --locked --format=json | jq 'length')" -eq 0 ]; then
+            echo "No Composer package dependencies to audit"
+            exit 0
+          fi
+          code=1
+          for attempt in 1 2 3; do
+            if composer audit --locked --no-interaction --no-ansi; then
+              exit 0
+            else
+              code=$?
+            fi
+            if [ "$code" -lt 100 ]; then
+              exit "$code"
+            fi
+            if [ "$attempt" -lt 3 ]; then
+              sleep "$((attempt * 5))"
+            fi
+          done
+          exit "$code"
+
   opengrep:
     name: OpenGrep (SAST)
     runs-on: ubuntu-latest
