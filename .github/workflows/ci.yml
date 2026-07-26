@@ -20,3 +20,4 @@ jobs:
       - run: composer validate --strict --no-check-publish
       - run: php -l src/KrynoxCaptcha.php
       - run: php -d zend.assertions=1 -d assert.exception=1 tests/contract.php
+      - run: php -d zend.assertions=1 -d assert.exception=1 tests/integration.php
