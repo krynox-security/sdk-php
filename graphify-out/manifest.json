@@ -1,0 +1,57 @@
+{
+  "composer.json": {
+    "mtime": 1784711388.3951352,
+    "ast_hash": "1689ebbb6c2f82b96041c4351002b3bb",
+    "semantic_hash": "1689ebbb6c2f82b96041c4351002b3bb"
+  },
+  "src/KrynoxCaptcha.php": {
+    "mtime": 1785091434.8355167,
+    "ast_hash": "39741e0e4b0ad6943dfebc9312fd990b",
+    "semantic_hash": "39741e0e4b0ad6943dfebc9312fd990b"
+  },
+  "tests/contract.php": {
+    "mtime": 1784711388.4103088,
+    "ast_hash": "13100ba64520b3b5ba09068ac5492dff",
+    "semantic_hash": "13100ba64520b3b5ba09068ac5492dff"
+  },
+  "tests/fixtures/golden-v1.json": {
+    "mtime": 1784711388.410585,
+    "ast_hash": "9bc84d8c56fffa4645bf848f13362069",
+    "semantic_hash": "9bc84d8c56fffa4645bf848f13362069"
+  },
+  "tests/integration.php": {
+    "mtime": 1785091522.598904,
+    "ast_hash": "b78cb95d947f141513327ef6f5808928",
+    "semantic_hash": "b78cb95d947f141513327ef6f5808928"
+  },
+  "tests/mock-server.php": {
+    "mtime": 1785091446.8345695,
+    "ast_hash": "924d18fea688ff56bde4dd83b7344fa9",
+    "semantic_hash": "924d18fea688ff56bde4dd83b7344fa9"
+  },
+  ".github/workflows/ci.yml": {
+    "mtime": 1785087440.6917925,
+    "ast_hash": "d015ca6062c47fac2a00290489df4ba5",
+    "semantic_hash": ""
+  },
+  ".github/workflows/release.yml": {
+    "mtime": 1784711388.3951352,
+    "ast_hash": "6f45a7bb5453eb444cbd1320ac2f5a27",
+    "semantic_hash": ""
+  },
+  ".github/workflows/security.yml": {
+    "mtime": 1784954579.2806306,
+    "ast_hash": "690db0c6c3647d699682fc140eabc7f4",
+    "semantic_hash": ""
+  },
+  "CHANGELOG.md": {
+    "mtime": 1785091540.094981,
+    "ast_hash": "9fd48291bf48f45414b91c980160e8fc",
+    "semantic_hash": ""
+  },
+  "README.md": {
+    "mtime": 1785091533.8549535,
+    "ast_hash": "e031f84941a4b86917807ec35fffafab",
+    "semantic_hash": ""
+  }
+}

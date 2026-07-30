@@ -1,2 +1,7 @@
 vendor/
 composer.lock
+
+# Graphify portable outputs stay tracked.
+graphify-out/cache/
+graphify-out/cost.json
+graphify-out/.graphify_*
